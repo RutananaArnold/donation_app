@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "609348516413",
+    "project_id": "musayi-6481a",
+    "storage_bucket": "musayi-6481a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609348516413:android:3011148f4f3833895a0854",
+        "android_client_info": {
+          "package_name": "com.example.musayi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "609348516413-rr6gv561lulg6btlmtrchbdqp7hjpf28.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArVwSC45ULDGbJfWhT40BlA8_RNOyRgco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "609348516413-rr6gv561lulg6btlmtrchbdqp7hjpf28.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "609348516413-34qa9nftr6ji1e56q6abnq7f60cf3290.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.musayi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
