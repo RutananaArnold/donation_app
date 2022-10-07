@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:musayi/constants/color_pallete.dart';
+import 'package:musayi/screens/userscreens/all_requests.dart';
 import 'package:musayi/widgets/rounded_button.dart';
 import 'package:musayi/widgets/rounded_input.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class RequestBlood extends StatefulWidget {
   const RequestBlood({Key? key}) : super(key: key);
@@ -14,6 +17,7 @@ class RequestBlood extends StatefulWidget {
 class _RequestBloodState extends State<RequestBlood> {
   final formkey = GlobalKey<FormState>();
   var needDate = TextEditingController();
+  final locationCtrl = TextEditingController();
   DateTime selectedDate = DateTime.now();
   bool _decideWhichDayToEnable(DateTime day) {
     if ((day.isAfter(DateTime.now().subtract(const Duration(days: 1))) &&
@@ -55,13 +59,23 @@ class _RequestBloodState extends State<RequestBlood> {
     'O-',
     'AB-'
   ];
-  String location = '';
   String bloodAmount = '';
   String phone = '';
 
   // Create a CollectionReference called users that references the firestore collection
   CollectionReference requests =
       FirebaseFirestore.instance.collection('bloodRequest');
+
+  getUserLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks[0];
+    String completeAddress = '${placemark.locality}, ${placemark.subLocality},';
+    locationCtrl.text = completeAddress;
+    print(completeAddress);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,11 +95,10 @@ class _RequestBloodState extends State<RequestBlood> {
                   label: "Location",
                   hint: "location",
                   icon: Icons.location_on,
-                  onChanged: (String value) {
-                    setState(() {
-                      location = value;
-                    });
-                  },
+                  handler: locationCtrl,
+                  suffixIcon: IconButton(
+                      onPressed: (() => getUserLocation()),
+                      icon: const Icon(Icons.add_location_alt_rounded)),
                 ),
                 RoundedInput(
                   label: "Blood Amount",
@@ -150,8 +163,12 @@ class _RequestBloodState extends State<RequestBlood> {
                     text: "Request Blood",
                     press: () {
                       if (formkey.currentState!.validate()) {
-                        requestBlood(location, bloodAmount, phone, bloodType,
-                            needDate.text);
+                        requestBlood(locationCtrl.text, bloodAmount, phone,
+                            bloodType, needDate.text);
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: ((context) => const Requests())),
+                            (route) => true);
                       }
                     },
                     color: Colors.red),

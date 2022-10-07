@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:musayi/authgate.dart';
 import 'package:musayi/widgets/rounded_button.dart';
 
 import '../../widgets/profile_tile.dart';
@@ -102,6 +103,10 @@ class _ProfileState extends State<Profile> {
                 text: "SignOut",
                 press: () {
                   signingout();
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: ((context) => const AuthGate())),
+                      (route) => true);
                 },
                 color: Colors.red),
           )

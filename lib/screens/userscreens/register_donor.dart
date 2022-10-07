@@ -4,6 +4,8 @@ import 'package:musayi/widgets/rounded_button.dart';
 import 'package:musayi/widgets/rounded_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../constants/color_pallete.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class RegisterDonor extends StatefulWidget {
   const RegisterDonor({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class RegisterDonor extends StatefulWidget {
 class _RegisterDonorState extends State<RegisterDonor> {
   final formKey = GlobalKey<FormState>();
   var dateOfBirth = TextEditingController();
+  final locationCtrl = TextEditingController();
   DateTime selectedDate = DateTime.now();
   bool _decideWhichDayToEnable(DateTime day) {
     if ((day.isAfter(DateTime.now().subtract(const Duration(days: 1))) &&
@@ -68,11 +71,21 @@ class _RegisterDonorState extends State<RegisterDonor> {
     'AB-'
   ];
   String name = ' ';
-  String location = '';
   String phone = '';
 
   // Create a CollectionReference called donors that references the firestore collection
   CollectionReference donors = FirebaseFirestore.instance.collection('donors');
+
+  getUserLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks[0];
+    String completeAddress = '${placemark.locality}, ${placemark.subLocality},';
+    locationCtrl.text = completeAddress;
+    print(completeAddress);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,11 +115,10 @@ class _RegisterDonorState extends State<RegisterDonor> {
                   label: "Location",
                   hint: "location",
                   icon: Icons.location_on,
-                  onChanged: (String value) {
-                    setState(() {
-                      location = value;
-                    });
-                  },
+                  handler: locationCtrl,
+                  suffixIcon: IconButton(
+                      onPressed: (() => getUserLocation()),
+                      icon: const Icon(Icons.add_location_alt_rounded)),
                 ),
                 RoundedInput(
                   label: "Phone number",
@@ -188,9 +200,9 @@ class _RegisterDonorState extends State<RegisterDonor> {
                     press: () {
                       if (formKey.currentState!.validate()) {
                         print(
-                            "$name, $location, $phone, $bloodType, $genderType,${dateOfBirth.text}");
-                        addDonor(name, location, phone, bloodType, genderType,
-                            dateOfBirth.text);
+                            "$name, $locationCtrl, $phone, $bloodType, $genderType,${dateOfBirth.text}");
+                        addDonor(name, locationCtrl.text, phone, bloodType,
+                            genderType, dateOfBirth.text);
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(builder: ((context) => Index())),
                             (route) => true);

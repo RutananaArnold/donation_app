@@ -21,7 +21,7 @@ class _IndexState extends State<Index> {
         : drawerkey.currentState?.openDrawer();
   }
 
-  List<String> tabTitles = ['Recent Donors', 'All Requests', 'Profile'];
+  List<String> tabTitles = ['Home', 'All Requests', 'Profile'];
 
   List<Widget> tabs = [
     const Home(),
